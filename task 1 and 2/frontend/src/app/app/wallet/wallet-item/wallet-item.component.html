@@ -1,0 +1,40 @@
+<div class="container" (click)="toggle()">
+  <div class="title">{{ purchase.title }}</div>
+
+  <tui-badge
+    class="support-1"
+    status="success"
+    [value]="formattedPrice"
+    [hoverable]="true"
+  ></tui-badge>
+
+  <tui-svg
+    src="tuiIconCloseCircleLarge"
+    class="close icon"
+    (click)="onClick()"
+  ></tui-svg>
+</div>
+
+<tui-expand [expanded]="expanded">
+  <ng-template tuiExpandContent>
+    <div class="expand">
+      <div class="comment">
+        {{ purchase.comment }}
+      </div>
+
+      <tui-svg
+        src="tuiIconEditLarge"
+        class="edit icon"
+        (click)="toggleEdit()"
+      ></tui-svg>
+
+      <app-wallet-add *ngIf="editExpanded"
+                      (action)="editPurchase($event)"
+                      [title]="purchase.title"
+                      [price]="purchase.price.toString()"
+                      [comment]="purchase.comment"
+      ></app-wallet-add>
+
+    </div>
+  </ng-template>
+</tui-expand>

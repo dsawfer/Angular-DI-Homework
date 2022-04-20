@@ -18,19 +18,27 @@ export class FlipCardsCardComponent implements OnInit {
   @Output()
   flippedChange = new EventEmitter<boolean>()
 
+  flipStopper = false;
+
   constructor(public cardService: CardService) {}
 
   ngOnInit(): void {
   }
 
   flip(): void {
-    this.isFlipped = !this.isFlipped
-    this.flippedChange.emit(this.isFlipped);
+    if (!this.flipStopper) {
+      this.flipStopper = true;
 
-    if (this.cardData.state === "default") {
-      this.cardData.state = "flipped";
-    } else {
-      this.cardData.state = "default";
+      this.isFlipped = !this.isFlipped
+      this.flippedChange.emit(this.isFlipped);
+
+      if (this.cardData.state === "default") {
+        this.cardData.state = "flipped";
+      } else {
+        this.cardData.state = "default";
+      }
+
+      setTimeout(() => this.flipStopper = false, 800)
     }
   }
 

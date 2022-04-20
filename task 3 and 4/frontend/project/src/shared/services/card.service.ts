@@ -70,6 +70,7 @@ const data: Card[] = [
 export class CardService {
 
   private _cards: Card[] = [];
+  public flippedCardIndex: number = -1;
 
   constructor() { }
 
@@ -89,6 +90,7 @@ export class CardService {
   deleteCard(card: Card): void {
     let targetCardIndex = this._cards.indexOf(card);
     if (targetCardIndex !== -1) this._cards.splice(targetCardIndex, 1);
+    this.flippedCardIndex = -1;
     this.initialize();
   }
 }

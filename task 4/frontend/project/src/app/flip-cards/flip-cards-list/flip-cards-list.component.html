@@ -1,0 +1,8 @@
+<div class="list">
+  <app-flip-cards-card *ngFor="let card of cardService.cards; index as i"
+                       [cardData]="card"
+                       [isFlipped]="cardService.flippedCardIndex === i"
+                       (flippedChange)="changeCurrentFlippedCardIndex(i, $event)"
+  ></app-flip-cards-card>
+</div>
+

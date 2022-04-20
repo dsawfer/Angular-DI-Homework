@@ -1,0 +1,17 @@
+<div [ngClass]="isFlipped ? 'flipped' : ''" class="card" (click)="flip()">
+  <div class="back">
+    <div class="close" (click)="deleteCard()"></div>
+    <div class="title">
+      {{cardData.title}}
+    </div>
+  </div>
+  <div class="front">
+    <div class="close" (click)="deleteCard()"></div>
+    <div class="title">
+      {{cardData.title}}
+    </div>
+    <div class="content">
+      {{cardData.content}}
+    </div>
+  </div>
+</div>

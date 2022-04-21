@@ -1,6 +1,7 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {Card} from "../../../shared/models/Card";
 import {CardService} from "../../../shared/services/card.service";
+import {CardFlipMemorizerService} from "../../../shared/services/cardFlipMemorizer.service";
 
 @Component({
   selector: 'app-flip-cards-card',
@@ -15,12 +16,11 @@ export class FlipCardsCardComponent implements OnInit {
   @Input()
   isFlipped = false
 
-  @Output()
-  flippedChange = new EventEmitter<boolean>()
-
   flipStopper = false;
 
-  constructor(public cardService: CardService) {}
+  constructor(public cardService: CardService,
+              public cardFlipMemorizerService: CardFlipMemorizerService) {
+  }
 
   ngOnInit(): void {
   }
@@ -30,15 +30,16 @@ export class FlipCardsCardComponent implements OnInit {
       this.flipStopper = true;
 
       this.isFlipped = !this.isFlipped
-      this.flippedChange.emit(this.isFlipped);
 
-      if (this.cardData.state === "default") {
-        this.cardData.state = "flipped";
+      if (this.isFlipped) {
+        this.cardFlipMemorizerService.setFlipCard(this.cardData);
       } else {
-        this.cardData.state = "default";
+        this.cardFlipMemorizerService.clearFlipCard(this.cardData);
       }
 
-      setTimeout(() => this.flipStopper = false, 800)
+      setTimeout(() => {
+        this.flipStopper = false;
+      }, 800)
     }
   }
 

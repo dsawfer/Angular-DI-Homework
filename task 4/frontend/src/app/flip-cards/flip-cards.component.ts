@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import {Card} from "../../shared/models/Card";
 import {CardService} from "../../shared/services/card.service";
+import {CardFlipMemorizerService} from "../../shared/services/cardFlipMemorizer.service";
 
 @Component({
   selector: 'app-flip-cards',
@@ -9,7 +10,8 @@ import {CardService} from "../../shared/services/card.service";
 })
 export class FlipCardsComponent implements OnInit {
 
-  constructor(public cardService: CardService) { }
+  constructor(public cardService: CardService) {
+  }
 
   ngOnInit(): void {
     this.cardService.initialize();

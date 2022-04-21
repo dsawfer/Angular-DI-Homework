@@ -1,8 +1,8 @@
+<button (click)="flipAll()">Перевернуть все карты</button>
 <div class="list">
-  <app-flip-cards-card *ngFor="let card of cardService.cards; index as i"
+  <app-flip-cards-card *ngFor="let card of cardService.cards"
                        [cardData]="card"
-                       [isFlipped]="cardService.flippedCardIndex === i"
-                       (flippedChange)="changeCurrentFlippedCardIndex(i, $event)"
+                       [isFlipped]="cardFlipMemorizerService.getFlipCard(card) === 'flipped'"
   ></app-flip-cards-card>
 </div>
 

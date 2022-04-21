@@ -1,68 +1,8 @@
-import { Injectable } from '@angular/core';
+import {Inject, Injectable} from '@angular/core';
 import {Card} from "../models/Card";
+import {ICardApiService, ICardApiServiceToken} from "../interfaces/ICardApiService";
+import {CardFlipMemorizerService} from "./cardFlipMemorizer.service";
 
-const data: Card[] = [
-  {
-    title: "Card 1",
-    content: "Lorem Ipsum - это текст-\"рыба\", часто используемый в печати и вэб-дизайне. " +
-      "Lorem Ipsum является стандартной \"рыбой\" для текстов на латинице с начала XVI века. " +
-      "Lorem Ipsum - это текст-\"рыба\", часто используемый в печати и вэб-дизайне. Lorem Ipsum " +
-      "является стандартной \"рыбой\" для текстов на латинице с начала XVI века. Lorem Ipsum - " +
-      "это текст-\"рыба\", часто используемый в печати и вэб-дизайне. Lorem Ipsum является стандартной \"рыбой\" " +
-      "для текстов на латинице с начала XVI века.",
-    state: "default"
-  },
-  {
-    title: "Card 2",
-    content: "Lorem Ipsum - это текст-\"рыба\", часто используемый в печати и вэб-дизайне. " +
-      "Lorem Ipsum является стандартной \"рыбой\" для текстов на латинице с начала XVI века. " +
-      "Lorem Ipsum - это текст-\"рыба\", часто используемый в печати и вэб-дизайне. Lorem Ipsum " +
-      "является стандартной \"рыбой\" для текстов на латинице с начала XVI века. Lorem Ipsum - " +
-      "это текст-\"рыба\", часто используемый в печати и вэб-дизайне. Lorem Ipsum является стандартной \"рыбой\" " +
-      "для текстов на латинице с начала XVI века.",
-    state: "default"
-  },
-  {
-    title: "Card 3",
-    content: "Lorem Ipsum - это текст-\"рыба\", часто используемый в печати и вэб-дизайне. " +
-      "Lorem Ipsum является стандартной \"рыбой\" для текстов на латинице с начала XVI века. " +
-      "Lorem Ipsum - это текст-\"рыба\", часто используемый в печати и вэб-дизайне. Lorem Ipsum " +
-      "является стандартной \"рыбой\" для текстов на латинице с начала XVI века. Lorem Ipsum - " +
-      "это текст-\"рыба\", часто используемый в печати и вэб-дизайне. Lorem Ipsum является стандартной \"рыбой\" " +
-      "для текстов на латинице с начала XVI века.",
-    state: "default"
-  },
-  {
-    title: "Card 4",
-    content: "Lorem Ipsum - это текст-\"рыба\", часто используемый в печати и вэб-дизайне. " +
-      "Lorem Ipsum является стандартной \"рыбой\" для текстов на латинице с начала XVI века. " +
-      "Lorem Ipsum - это текст-\"рыба\", часто используемый в печати и вэб-дизайне. Lorem Ipsum " +
-      "является стандартной \"рыбой\" для текстов на латинице с начала XVI века. Lorem Ipsum - " +
-      "это текст-\"рыба\", часто используемый в печати и вэб-дизайне. Lorem Ipsum является стандартной \"рыбой\" " +
-      "для текстов на латинице с начала XVI века.",
-    state: "default"
-  },
-  {
-    title: "Card 5",
-    content: "Lorem Ipsum - это текст-\"рыба\", часто используемый в печати и вэб-дизайне. " +
-      "Lorem Ipsum является стандартной \"рыбой\" для текстов на латинице с начала XVI века. " +
-      "Lorem Ipsum - это текст-\"рыба\", часто используемый в печати и вэб-дизайне. Lorem Ipsum " +
-      "является стандартной \"рыбой\" для текстов на латинице с начала XVI века. Lorem Ipsum - " +
-      "это текст-\"рыба\", часто используемый в печати и вэб-дизайне. Lorem Ipsum является стандартной \"рыбой\" " +
-      "для текстов на латинице с начала XVI века.",
-    state: "default"
-  },
-  {
-    title: "Card 6",
-    content: "Lorem Ipsum - это текст-\"рыба\", часто используемый в печати и вэб-дизайне. " +
-      "Lorem Ipsum является стандартной \"рыбой\" для текстов на латинице с начала XVI века. " +
-      "Lorem Ipsum - это текст-\"рыба\", часто используемый в печати и вэб-дизайне. Lorem Ipsum " +
-      "является стандартной \"рыбой\" для текстов на латинице с начала XVI века. Lorem Ipsum - " +
-      "это текст-\"рыба\", часто используемый в печати и вэб-дизайне. Lorem Ipsum является стандартной \"рыбой\" " +
-      "для текстов на латинице с начала XVI века.",
-    state: "default"
-  }
-]
 
 @Injectable({
   providedIn: 'root'
@@ -72,25 +12,46 @@ export class CardService {
   private _cards: Card[] = [];
   public flippedCardIndex: number = -1;
 
-  constructor() { }
+  constructor(
+    @Inject(ICardApiServiceToken)
+    private cardApiService: ICardApiService,
+    public cardFlipMemorizerService: CardFlipMemorizerService
+  ) { }
 
   get cards(): Card[] {
     return this._cards;
   }
 
   initialize() {
-    this._cards = data;
+    this.cardApiService.getAll().subscribe(cards => {
+      this._cards = cards;
+      this.cardFlipMemorizerService.checkFlipCards(this._cards);
+    });
   }
 
   addCard(card: Card): void {
-    data.push(card);
-    this.initialize();
+    this.cardApiService.add(card).subscribe(() => {
+      this.initialize();
+    });
   }
 
   deleteCard(card: Card): void {
-    let targetCardIndex = this._cards.indexOf(card);
-    if (targetCardIndex !== -1) this._cards.splice(targetCardIndex, 1);
-    this.flippedCardIndex = -1;
-    this.initialize();
+    this.cardFlipMemorizerService.clearFlipCard(card);
+    this.cardApiService.delete(card.id!).subscribe(() => {
+      this.initialize();
+    });
   }
+
+  // flipCard(card: Card): void {
+  //   if (card.state === "default") {
+  //     card.state = "flipped";
+  //   } else {
+  //     card.state = "default";
+  //   }
+  //
+  //   this.cardApiService.edit(card).subscribe(() => {
+  //     this.initialize();
+  //   });
+  //
+  // }
 }

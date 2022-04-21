@@ -25,8 +25,7 @@ export class FlipCardsAddComponent implements OnInit {
   submit(): void {
     this.addCard.emit({
       title: this.form.get('title')?.value,
-      content: this.form.get('content')?.value,
-      state: "default"
+      content: this.form.get('content')?.value
     })
   }
 }
